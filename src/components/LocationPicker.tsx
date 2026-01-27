@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import LiveTrackingMap from "./LiveTrackingMap";
+import LiveTrackingMap from "./LiveTrackingMapLeaflet";
 import { campusLocations } from "@/lib/maps/config";
 
 interface LocationPickerProps {

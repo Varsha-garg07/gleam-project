@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import RideCard from "@/components/RideCard";
 import { toast } from "sonner";
+import { onAuthChange, logOut } from "@/lib/firebase/auth";
 
 // Mock data
 const generateMockRides = (userId: string) => [
@@ -44,23 +45,34 @@ const generateMockRides = (userId: string) => [
 
 const MyRidesPage = () => {
   const navigate = useNavigate();
+
+  const [user, setUser] = useState<any>(null);
   const [rides, setRides] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const user = JSON.parse(localStorage.getItem("campusRideUser") || "null");
-
+  // 🔐 Firebase Auth – SINGLE source of truth
   useEffect(() => {
-    if (!user) {
-      navigate("/login-student");
-      return;
-    }
+    const unsub = onAuthChange((u) => {
+      if (!u) {
+        navigate("/login-student");
+      } else {
+        setUser(u);
+      }
+    });
 
-    // Simulate fetching rides
+    return () => unsub();
+  }, [navigate]);
+
+  // Fetch rides after user is available
+  useEffect(() => {
+    if (!user) return;
+
+    setIsLoading(true);
     setTimeout(() => {
-      setRides(generateMockRides(user._id));
+      setRides(generateMockRides(user.uid));
       setIsLoading(false);
     }, 800);
-  }, [navigate, user]);
+  }, [user]);
 
   const handleCancel = async (rideId: string) => {
     if (!window.confirm("Are you sure you want to cancel this ride?")) return;
@@ -69,20 +81,25 @@ const MyRidesPage = () => {
       await new Promise((resolve) => setTimeout(resolve, 500));
       setRides((prev) => prev.filter((ride) => ride._id !== rideId));
       toast.success("Ride cancelled successfully.");
-    } catch (err) {
+    } catch {
       toast.error("Failed to cancel ride.");
     }
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (
-      window.confirm(
+      !window.confirm(
         "Are you sure you want to delete your account? This action cannot be undone."
       )
-    ) {
-      localStorage.removeItem("campusRideUser");
+    )
+      return;
+
+    try {
+      await logOut();
       toast.success("Account deleted.");
       navigate("/");
+    } catch {
+      toast.error("Failed to delete account.");
     }
   };
 
@@ -91,6 +108,7 @@ const MyRidesPage = () => {
   const upcomingRides = rides.filter((r) =>
     ["pending", "scheduled", "en_route"].includes(r.status)
   );
+
   const pastRides = rides.filter((r) =>
     ["completed", "cancelled"].includes(r.status)
   );
@@ -119,12 +137,14 @@ const MyRidesPage = () => {
               You haven't booked any rides yet.
             </p>
             <Link to="/book">
-              <Button className="btn-primary-gradient">Book Your First Ride</Button>
+              <Button className="btn-primary-gradient">
+                Book Your First Ride
+              </Button>
             </Link>
           </div>
         ) : (
           <div className="space-y-10">
-            {/* Upcoming Rides */}
+            {/* Upcoming */}
             {upcomingRides.length > 0 && (
               <section className="animate-fade-up">
                 <div className="flex items-center gap-3 mb-6">
@@ -145,7 +165,7 @@ const MyRidesPage = () => {
                     >
                       <RideCard
                         ride={ride}
-                        userId={user._id}
+                        userId={user.uid}
                         onCancel={handleCancel}
                       />
                     </div>
@@ -154,9 +174,12 @@ const MyRidesPage = () => {
               </section>
             )}
 
-            {/* Past Rides */}
+            {/* Past */}
             {pastRides.length > 0 && (
-              <section className="animate-fade-up" style={{ animationDelay: "200ms" }}>
+              <section
+                className="animate-fade-up"
+                style={{ animationDelay: "200ms" }}
+              >
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center">
                     <Car className="w-5 h-5 text-muted-foreground" />
@@ -175,7 +198,7 @@ const MyRidesPage = () => {
                     >
                       <RideCard
                         ride={ride}
-                        userId={user._id}
+                        userId={user.uid}
                         showActions={false}
                       />
                     </div>
@@ -184,15 +207,16 @@ const MyRidesPage = () => {
               </section>
             )}
 
-            {/* Account Management */}
+            {/* Danger Zone */}
             <section className="pt-8 border-t border-border">
               <div className="flex items-center gap-3 mb-4">
                 <AlertCircle className="w-5 h-5 text-destructive" />
-                <h3 className="font-semibold text-destructive">Danger Zone</h3>
+                <h3 className="font-semibold text-destructive">
+                  Danger Zone
+                </h3>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
-                Once you delete your account, there is no going back. Please be
-                certain.
+                Once you delete your account, there is no going back.
               </p>
               <Button
                 variant="destructive"

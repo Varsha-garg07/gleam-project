@@ -10,8 +10,11 @@ import {
   signInWithPopup,
   User,
 } from "firebase/auth";
-import { auth } from "./config";
+import { getAuth } from "firebase/auth";
+import { firebaseApp } from "./config";
+
 import { createUserProfile, getUserProfile } from "./firestore";
+export const auth = getAuth(firebaseApp);
 
 // Sign up with email and password
 export const signUp = async (

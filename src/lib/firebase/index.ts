@@ -2,7 +2,7 @@
 // Import from this file for all Firebase functionality
 
 // App configuration
-export { default as app, auth, db, realtimeDb, initMessaging } from "./config";
+export { firebaseApp } from "./config";
 
 // Authentication
 export {

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { signUp } from "@/lib/firebase/auth";
 
 const RegisterPage = () => {
   const location = useLocation();
@@ -57,18 +58,17 @@ const RegisterPage = () => {
     setIsLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const { user, error } = await signUp(
+        formData.email,
+        formData.password,
+        formData.name,
+        formData.role as "student" | "driver",
+      );
 
-      // Mock user registration
-      const mockUser = {
-        _id: "user" + Date.now(),
-        name: formData.name,
-        email: formData.email,
-        role: formData.role,
-        token: "mock-token-" + Date.now(),
-      };
-
-      localStorage.setItem("campusRideUser", JSON.stringify(mockUser));
+      if (error || !user) {
+        setError(error || "Registration failed");
+        return;
+      }
 
       toast.success("Registration successful!");
 
@@ -84,13 +84,16 @@ const RegisterPage = () => {
     }
   };
 
+  
   const isDriver = formData.role === "driver";
   const Icon = isDriver ? Car : GraduationCap;
   const title = isDriver ? "Driver Registration" : "Student Registration";
   const subtitle = isDriver
     ? "Register as a driver to manage ride requests."
     : "Sign up to start scheduling your campus rides.";
-  const gradient = isDriver ? "from-accent to-success" : "from-primary to-accent";
+  const gradient = isDriver
+    ? "from-accent to-success"
+    : "from-primary to-accent";
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 py-12 bg-gradient-to-br from-background via-secondary/30 to-background">
@@ -232,7 +235,8 @@ const RegisterPage = () => {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    License Number <span className="text-muted-foreground">(optional)</span>
+                    License Number{" "}
+                    <span className="text-muted-foreground">(optional)</span>
                   </label>
                   <div className="relative">
                     <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />

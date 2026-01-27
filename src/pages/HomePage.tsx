@@ -6,6 +6,7 @@ import campusMainGate from "@/assets/campus-main-gate.jpg";
 import campusAdminBlock from "@/assets/campus-admin-block.jpg";
 import campusHostel from "@/assets/campus-hostel.jpg";
 import campusLibrary from "@/assets/campus-library.jpg";
+import Header from "@/components/Header";
 
 const HomePage = () => {
   const [showStudentMenu, setShowStudentMenu] = useState(false);
@@ -364,7 +365,7 @@ const HomePage = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-2 border-white text-white hover:bg-white/10 text-base px-8 py-6"
+                className="border-2 border-white text-primary hover:bg-white/10 text-base px-8 py-6"
               >
                 Sign In
               </Button>

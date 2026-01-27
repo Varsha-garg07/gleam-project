@@ -12,7 +12,10 @@ import {
   serverTimestamp,
   DataSnapshot,
 } from "firebase/database";
-import { realtimeDb } from "./config";
+import { getDatabase } from "firebase/database";
+import { firebaseApp } from "./config";
+
+export const realtimeDb = getDatabase(firebaseApp);
 
 // Location types
 export interface LocationData {

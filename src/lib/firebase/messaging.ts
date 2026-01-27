@@ -1,9 +1,11 @@
 // Firebase Cloud Messaging (FCM) Service
 // For push notifications
 
-import { getToken, onMessage, Messaging } from "firebase/messaging";
-import { initMessaging } from "./config";
+import { getToken, onMessage, Messaging, getMessaging, isSupported } from "firebase/messaging";
+import { firebaseApp } from "./config";
+import { db } from "./firestore";
 import { createNotification } from "./firestore";
+import { doc, updateDoc } from "firebase/firestore";
 
 // VAPID Key from Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
 // You need to generate this in your Firebase Console
@@ -11,12 +13,16 @@ const VAPID_KEY = "YOUR_VAPID_KEY";
 
 let messaging: Messaging | null = null;
 
-// Initialize messaging
 export const initializeMessaging = async () => {
   if (messaging) return messaging;
-  messaging = await initMessaging();
+
+  const supported = await isSupported();
+  if (!supported) return null;
+
+  messaging = getMessaging(firebaseApp);
   return messaging;
 };
+
 
 // Request permission and get FCM token
 export const requestNotificationPermission = async (): Promise<string | null> => {
@@ -65,8 +71,6 @@ export const onForegroundMessage = (callback: (payload: any) => void) => {
 export const saveFCMToken = async (userId: string, token: string) => {
   // This would typically update the user's document in Firestore
   // to store their FCM token for sending targeted notifications
-  const { doc, updateDoc } = await import("firebase/firestore");
-  const { db } = await import("./config");
   
   try {
     await updateDoc(doc(db, "users", userId), {

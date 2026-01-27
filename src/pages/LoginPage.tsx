@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, ArrowLeft, Car, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { signIn } from "@/lib/firebase/auth";
 
 interface LoginPageProps {
   role: "student" | "driver";
@@ -24,43 +25,35 @@ const LoginPage = ({ role }: LoginPageProps) => {
   };
 
   const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  e.preventDefault();
+  setIsLoading(true);
 
-    // Simulate login - in real app this would call your auth API
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      // Mock user for demo
-      const mockUser = {
-        _id: "user123",
-        name: formData.email.split("@")[0],
-        email: formData.email,
-        role: role,
-        token: "mock-token-123",
-      };
+  const { user, error } = await signIn(
+    formData.email,
+    formData.password
+  );
 
-      localStorage.setItem("campusRideUser", JSON.stringify(mockUser));
-      
-      toast.success("Login successful!");
-      
-      if (role === "driver") {
-        navigate("/driver-dashboard");
-      } else {
-        navigate("/book");
-      }
-    } catch (error) {
-      toast.error("Login failed. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  setIsLoading(false);
+
+  if (error || !user) {
+    toast.error(error || "Login failed");
+    return;
+  }
+
+  toast.success("Login successful!");
+
+  // 🚀 FORCE NAVIGATION
+  if (role === "driver") {
+    navigate("/driver-dashboard", { replace: true });
+  } else {
+    navigate("/book", { replace: true });
+  }
+};
 
   const Icon = role === "driver" ? Car : GraduationCap;
   const title = role === "driver" ? "Driver Login" : "Student Login";
-  const gradient = role === "driver" 
-    ? "from-accent to-success" 
-    : "from-primary to-accent";
+  const gradient =
+    role === "driver" ? "from-accent to-success" : "from-primary to-accent";
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-secondary/30 to-background">
@@ -78,7 +71,9 @@ const LoginPage = ({ role }: LoginPageProps) => {
         <div className="card-elevated animate-fade-up">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className={`w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-4 shadow-lg`}>
+            <div
+              className={`w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-4 shadow-lg`}
+            >
               <Icon className="w-8 h-8 text-white" />
             </div>
             <h1 className="font-display text-2xl font-bold">{title}</h1>
@@ -108,9 +103,7 @@ const LoginPage = ({ role }: LoginPageProps) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Password
-              </label>
+              <label className="block text-sm font-medium mb-2">Password</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input

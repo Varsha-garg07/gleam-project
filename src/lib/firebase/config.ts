@@ -1,45 +1,18 @@
-// Firebase Configuration
-// Replace these values with your Firebase project credentials from Firebase Console
-// Go to: Firebase Console > Project Settings > Your Apps > Web App
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getDatabase } from "firebase/database";
-import { getMessaging, isSupported } from "firebase/messaging";
-
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID",
-  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+  apiKey: "AIzaSyDWKQe4e_8xgclF57go6QPBp8yzVrQSm84",
+  authDomain: "campus-ride-f8953.firebaseapp.com",
+  projectId: "campus-ride-f8953",
+  storageBucket: "campus-ride-f8953.firebasestorage.app",
+  messagingSenderId: "1019445981741",
+  appId: "1:1019445981741:web:c8de365a6c7de2435cfea4"
 };
 
-// Initialize Firebase (prevent multiple initializations)
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+// Initialize Firebase
+export const firebaseApp = initializeApp(firebaseConfig);
 
-// Initialize services
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const realtimeDb = getDatabase(app);
-
-// Initialize messaging (only in browser with service worker support)
-export const initMessaging = async () => {
-  try {
-    const supported = await isSupported();
-    if (supported) {
-      return getMessaging(app);
-    }
-    console.log("Firebase Messaging is not supported in this environment");
-    return null;
-  } catch (error) {
-    console.error("Error initializing Firebase Messaging:", error);
-    return null;
-  }
-};
-
-export default app;

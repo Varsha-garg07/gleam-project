@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import PoolCard from "@/components/PoolCard";
 import { toast } from "sonner";
+import { getCurrentUser } from "@/lib/firebase/auth";
 
 const CAMPUS_LOCATIONS = [
   "Main Gate",
@@ -81,22 +82,21 @@ const BookingPage = () => {
   });
 
   // Get user from localStorage
-  const user = JSON.parse(localStorage.getItem("campusRideUser") || "null");
+  // const user = JSON.parse(localStorage.getItem("campusRideUser") || "null");
+  const user = getCurrentUser();
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login-student");
-      return;
-    }
-
-    // Simulate fetching pools
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setPools(generateMockPools());
       setIsLoading(false);
     }, 800);
-  }, [navigate, user]);
 
-  const onChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+    return () => clearTimeout(timer);
+  }, [user?.uid]);
+
+  const onChange = (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
+  ) => {
     setFormData((d) => ({ ...d, [e.target.name]: e.target.value }));
     setError(null);
   };
@@ -126,8 +126,13 @@ const BookingPage = () => {
         dropoffName: formData.dropoffName,
         scheduledTime: new Date(formData.scheduledTime).toISOString(),
         status: "pending",
-        passengers: [{ _id: user._id, name: user.name }],
-        createdBy: { _id: user._id },
+        passengers: [
+          {
+            _id: user.uid,
+            name: user.displayName || "User",
+          },
+        ],
+        createdBy: { _id: user.uid },
       };
 
       setPools((prev) => [newPool, ...prev]);
@@ -145,7 +150,11 @@ const BookingPage = () => {
     }
   };
 
-  const handleJoin = async (rideId: string, pickup: string, dropoff: string) => {
+  const handleJoin = async (
+    rideId: string,
+    pickup: string,
+    dropoff: string,
+  ) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -156,11 +165,14 @@ const BookingPage = () => {
                 ...pool,
                 passengers: [
                   ...pool.passengers,
-                  { _id: user._id, name: user.name },
+                  {
+                    _id: user.uid,
+                    name: user.displayName || "User",
+                  },
                 ],
               }
-            : pool
-        )
+            : pool,
+        ),
       );
 
       toast.success("Joined ride successfully!");
@@ -337,7 +349,7 @@ const BookingPage = () => {
                   >
                     <PoolCard
                       ride={pool}
-                      userId={user._id}
+                      userId={user.uid}
                       capacity={MAX_CAR_CAPACITY}
                       locations={CAMPUS_LOCATIONS}
                       onJoin={handleJoin}
