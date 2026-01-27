@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import NotificationCenter from "./NotificationCenter";
 
 // Mock auth context - in real app this would come from context
 const useMockAuth = () => {
@@ -95,6 +96,9 @@ const Header = () => {
 
           {/* Right side - Auth buttons or user menu */}
           <div className="flex items-center gap-3">
+            {/* Notification Center */}
+            {isAuthenticated && <NotificationCenter />}
+            
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

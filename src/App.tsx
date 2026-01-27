@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { NotificationProvider } from "@/hooks/useNotifications";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -14,6 +15,7 @@ import DriverDashboard from "./pages/DriverDashboard";
 import SchedulePage from "./pages/SchedulePage";
 import DriverHistory from "./pages/DriverHistory";
 import CarManagementPage from "./pages/CarManagementPage";
+import LiveTrackingPage from "./pages/LiveTrackingPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +23,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <NotificationProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
@@ -36,6 +39,7 @@ const App = () => (
           {/* Student Routes */}
           <Route path="/book" element={<BookingPage />} />
           <Route path="/myrides" element={<MyRidesPage />} />
+          <Route path="/track/:rideId" element={<LiveTrackingPage />} />
           
           {/* Driver Routes */}
           <Route path="/driver-dashboard" element={<DriverDashboard />} />
@@ -49,6 +53,9 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+      </NotificationProvider>
+      <Toaster />
+      <Sonner />
     </TooltipProvider>
   </QueryClientProvider>
 );

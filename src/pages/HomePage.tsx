@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Car, Calendar, MapPin, Users, ArrowRight, Zap, Clock, Shield } from "lucide-react";
+import { Car, Calendar, MapPin, Users, ArrowRight, Zap, Clock, Shield, Building, BookOpen, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-campus.jpg";
+import campusMainGate from "@/assets/campus-main-gate.jpg";
+import campusAdminBlock from "@/assets/campus-admin-block.jpg";
+import campusHostel from "@/assets/campus-hostel.jpg";
+import campusLibrary from "@/assets/campus-library.jpg";
 
 const HomePage = () => {
   const [showStudentMenu, setShowStudentMenu] = useState(false);
@@ -45,8 +48,8 @@ const HomePage = () => {
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <img
-            src={heroImage}
-            alt="Campus transit"
+            src={campusMainGate}
+            alt="NIT Jalandhar Campus"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/70" />
@@ -194,6 +197,107 @@ const HomePage = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Campus Locations Section */}
+      <section className="py-24">
+        <div className="content-container">
+          <div className="text-center mb-16">
+            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
+              Explore <span className="text-gradient">NIT Jalandhar</span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Seamless connectivity across all major campus locations
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Main Gate */}
+            <div className="group relative overflow-hidden rounded-2xl aspect-[4/3]">
+              <img
+                src={campusMainGate}
+                alt="NIT Jalandhar Main Gate"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <div className="flex items-center gap-2 text-white/80 text-sm mb-2">
+                  <MapPin className="w-4 h-4" />
+                  Popular Pickup Point
+                </div>
+                <h3 className="text-xl font-bold text-white">Main Gate</h3>
+              </div>
+            </div>
+
+            {/* Admin Block */}
+            <div className="group relative overflow-hidden rounded-2xl aspect-[4/3]">
+              <img
+                src={campusAdminBlock}
+                alt="NIT Jalandhar Administrative Block"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <div className="flex items-center gap-2 text-white/80 text-sm mb-2">
+                  <Building className="w-4 h-4" />
+                  Administrative Area
+                </div>
+                <h3 className="text-xl font-bold text-white">Admin Block</h3>
+              </div>
+            </div>
+
+            {/* Library */}
+            <div className="group relative overflow-hidden rounded-2xl aspect-[4/3]">
+              <img
+                src={campusLibrary}
+                alt="NIT Jalandhar Central Library"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <div className="flex items-center gap-2 text-white/80 text-sm mb-2">
+                  <BookOpen className="w-4 h-4" />
+                  Study Zone
+                </div>
+                <h3 className="text-xl font-bold text-white">Central Library</h3>
+              </div>
+            </div>
+
+            {/* Hostels - Large card spanning 2 columns */}
+            <div className="group relative overflow-hidden rounded-2xl aspect-[4/3] md:col-span-2 lg:col-span-2">
+              <img
+                src={campusHostel}
+                alt="NIT Jalandhar Hostels"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <div className="flex items-center gap-2 text-white/80 text-sm mb-2">
+                  <Home className="w-4 h-4" />
+                  Residential Area
+                </div>
+                <h3 className="text-xl font-bold text-white">Student Hostels</h3>
+                <p className="text-white/70 text-sm mt-1">
+                  Boys Hostels, Girls Hostels, Mega Hostels
+                </p>
+              </div>
+            </div>
+
+            {/* Stats Card */}
+            <div className="bg-gradient-to-br from-primary to-accent rounded-2xl p-6 flex flex-col justify-center">
+              <h3 className="text-2xl font-bold text-white mb-4">15+ Locations</h3>
+              <p className="text-white/80 mb-6">
+                All major campus spots covered for quick and easy rides
+              </p>
+              <Link to="/book">
+                <Button className="bg-white text-primary hover:bg-white/90 w-full">
+                  Book Now
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
