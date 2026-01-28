@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  Car, 
-  Users, 
-  Clock, 
-  MapPin, 
-  Loader2, 
-  CheckCircle, 
+import {
+  Car,
+  Users,
+  Clock,
+  MapPin,
+  Loader2,
+  CheckCircle,
   XCircle,
   KeyRound,
-  Unlock
+  Unlock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import { toast } from "sonner";
+import { auth } from "@/lib/firebase/auth";
 
 // Mock data
 const generateMockRequests = () => [
@@ -40,15 +41,17 @@ const generateMockRequests = () => [
 
 const DriverDashboard = () => {
   const navigate = useNavigate();
+
   const [car, setCar] = useState<any>(null);
   const [requests, setRequests] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const user = JSON.parse(localStorage.getItem("campusRideUser") || "null");
-
+  // 🔐 AUTH CHECK — FIREBASE ONLY
   useEffect(() => {
-    if (!user || user.role !== "driver") {
-      navigate("/login-driver");
+    const firebaseUser = auth.currentUser;
+
+    if (!firebaseUser) {
+      navigate("/login-driver", { replace: true });
       return;
     }
 
@@ -57,7 +60,7 @@ const DriverDashboard = () => {
       setRequests(generateMockRequests());
       setIsLoading(false);
     }, 800);
-  }, [navigate, user]);
+  }, [navigate]);
 
   const handleTakeCar = async () => {
     try {
@@ -68,19 +71,20 @@ const DriverDashboard = () => {
         capacity: 6,
       });
       toast.success("Car assigned successfully!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to take car.");
     }
   };
 
   const handleReleaseCar = async () => {
     if (!window.confirm("Release this car?")) return;
+
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       setCar(null);
       setRequests([]);
       toast.success("Car released.");
-    } catch (err) {
+    } catch {
       toast.error("Failed to release car.");
     }
   };
@@ -90,23 +94,22 @@ const DriverDashboard = () => {
       await new Promise((resolve) => setTimeout(resolve, 500));
       setRequests((prev) => prev.filter((r) => r._id !== rideId));
       toast.success("Ride approved!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to approve ride.");
     }
   };
 
   const handleReject = async (rideId: string) => {
     if (!window.confirm("Reject this ride request?")) return;
+
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       setRequests((prev) => prev.filter((r) => r._id !== rideId));
       toast.success("Ride rejected.");
-    } catch (err) {
+    } catch {
       toast.error("Failed to reject ride.");
     }
   };
-
-  if (!user) return null;
 
   return (
     <div className="page-container min-h-screen">
@@ -194,11 +197,10 @@ const DriverDashboard = () => {
                   <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="font-display font-bold text-lg">
-                    Ride Requests
-                  </h2>
+                  <h2 className="font-display font-bold text-lg">Ride Requests</h2>
                   <p className="text-sm text-muted-foreground">
-                    {requests.length} pending request{requests.length !== 1 && "s"}
+                    {requests.length} pending request
+                    {requests.length !== 1 && "s"}
                   </p>
                 </div>
               </div>
@@ -227,7 +229,6 @@ const DriverDashboard = () => {
                       className="card-elevated animate-fade-up"
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
-                      {/* Header */}
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-2 text-sm font-medium">
                           <Clock className="w-4 h-4 text-muted-foreground" />
@@ -238,20 +239,22 @@ const DriverDashboard = () => {
                         </span>
                       </div>
 
-                      {/* Route */}
                       <div className="flex items-center gap-4 mb-4">
                         <div className="flex items-center gap-2">
                           <MapPin className="w-5 h-5 text-primary" />
-                          <span className="font-semibold">{request.pickupName}</span>
+                          <span className="font-semibold">
+                            {request.pickupName}
+                          </span>
                         </div>
                         <div className="flex-1 border-t-2 border-dashed border-muted-foreground/30" />
                         <div className="flex items-center gap-2">
                           <MapPin className="w-5 h-5 text-accent" />
-                          <span className="font-semibold">{request.dropoffName}</span>
+                          <span className="font-semibold">
+                            {request.dropoffName}
+                          </span>
                         </div>
                       </div>
 
-                      {/* Passengers */}
                       <div className="mb-4 p-3 rounded-lg bg-secondary/50">
                         <p className="text-sm font-medium mb-2">
                           Passengers ({request.passengers.length})
@@ -268,7 +271,6 @@ const DriverDashboard = () => {
                         </div>
                       </div>
 
-                      {/* Actions */}
                       <div className="flex gap-3">
                         <Button
                           onClick={() => handleApprove(request._id)}

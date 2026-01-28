@@ -1,73 +1,59 @@
-# Welcome to your Lovable project
+🚗 Campus Ride
 
-## Project info
+Campus Ride is a role-based ride management system designed for university campuses.
+It enables students to book rides and drivers to manage car assignments and approve ride requests — all powered by Firebase Authentication and modern React tooling.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+✨ Features
+👨‍🎓 Student
 
-## How can I edit this code?
+Secure login & registration
 
-There are several ways of editing your application.
+Book campus rides
 
-**Use Lovable**
+View ride history
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Live ride tracking (Maps API + Firebase Realtime DB)
 
-Changes made via Lovable will be committed automatically to this repo.
+🚖 Driver
 
-**Use your preferred IDE**
+Secure driver login
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Driver dashboard
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Take / release campus cars
 
-Follow these steps:
+View and approve/reject ride requests
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Real-time updates
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+🔐 Authentication
 
-# Step 3: Install the necessary dependencies.
-npm i
+Firebase Email & Password Authentication
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+Role-based routing (Student / Driver)
 
-**Edit a file directly in GitHub**
+Protected routes
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Persistent login across refresh
 
-**Use GitHub Codespaces**
+🛠️ Tech Stack
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Frontend: React + TypeScript (TSX)
 
-## What technologies are used for this project?
+Routing: React Router v6
 
-This project is built with:
+State/Data: TanStack React Query
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Backend: Firebase
 
-## How can I deploy this project?
+Authentication
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+Firestore
 
-## Can I connect a custom domain to my Lovable project?
+Realtime Database
 
-Yes, you can!
+UI: Tailwind CSS + Shadcn UI
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Maps: Leaflet
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Notifications: Sonner

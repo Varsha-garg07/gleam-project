@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { NotificationProvider } from "@/hooks/useNotifications";
-import { onAuthChange } from "@/lib/firebase/auth";
+
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Pages
@@ -24,23 +24,6 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  // 🔐 Firebase auth listener (single source of truth)
-  useEffect(() => {
-    const unsubscribe = onAuthChange((firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  // ⏳ Prevent route flicker while auth is resolving
-  if (loading) {
-    return null; // or spinner
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -50,19 +33,25 @@ const App = () => {
 
           <BrowserRouter>
             <Routes>
-              {/* ===== PUBLIC ROUTES ===== */}
+              {/* ===== PUBLIC ===== */}
               <Route path="/" element={<HomePage />} />
 
-              {/* ===== AUTH ROUTES (NO REDIRECT LOGIC HERE) ===== */}
-              <Route path="/login-student" element={<LoginPage role="student" />} />
-              <Route path="/login-driver" element={<LoginPage role="driver" />} />
+              {/* ===== AUTH ===== */}
+              <Route
+                path="/login-student"
+                element={<LoginPage role="student" />}
+              />
+              <Route
+                path="/login-driver"
+                element={<LoginPage role="driver" />}
+              />
               <Route path="/register" element={<RegisterPage />} />
 
-              {/* ===== STUDENT ROUTES ===== */}
+              {/* ===== STUDENT ===== */}
               <Route
                 path="/book"
                 element={
-                  <ProtectedRoute user={user}>
+                  <ProtectedRoute>
                     <BookingPage />
                   </ProtectedRoute>
                 }
@@ -71,7 +60,7 @@ const App = () => {
               <Route
                 path="/myrides"
                 element={
-                  <ProtectedRoute user={user}>
+                  <ProtectedRoute>
                     <MyRidesPage />
                   </ProtectedRoute>
                 }
@@ -80,17 +69,17 @@ const App = () => {
               <Route
                 path="/track/:rideId"
                 element={
-                  <ProtectedRoute user={user}>
+                  <ProtectedRoute>
                     <LiveTrackingPage />
                   </ProtectedRoute>
                 }
               />
 
-              {/* ===== DRIVER ROUTES ===== */}
+              {/* ===== DRIVER ===== */}
               <Route
                 path="/driver-dashboard"
                 element={
-                  <ProtectedRoute user={user}>
+                  <ProtectedRoute>
                     <DriverDashboard />
                   </ProtectedRoute>
                 }
@@ -99,7 +88,7 @@ const App = () => {
               <Route
                 path="/schedule"
                 element={
-                  <ProtectedRoute user={user}>
+                  <ProtectedRoute>
                     <SchedulePage />
                   </ProtectedRoute>
                 }
@@ -108,17 +97,18 @@ const App = () => {
               <Route
                 path="/driver/history"
                 element={
-                  <ProtectedRoute user={user}>
+                  <ProtectedRoute>
                     <DriverHistory />
                   </ProtectedRoute>
                 }
               />
 
-              {/* ===== ADMIN ROUTES ===== */}
+              {/* ===== ADMIN ===== */}
               <Route
+              
                 path="/admin/cars"
                 element={
-                  <ProtectedRoute user={user}>
+                  <ProtectedRoute>
                     <CarManagementPage />
                   </ProtectedRoute>
                 }
